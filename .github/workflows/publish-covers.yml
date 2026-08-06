@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'assets/**/*.zip'
+      - '.github/workflows/publish-covers.yml'
 
 permissions:
   contents: write
