@@ -3,6 +3,7 @@ name: Publicar capas
 on:
   push:
     paths:
+      - 'assets/**/*.zip'
       - 'assets/**/*.b64'
 
 permissions:
@@ -15,7 +16,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Decodificar capas
+      - name: Publicar lotes
         shell: bash
         run: |
           python - <<'PY'
@@ -24,7 +25,19 @@ jobs:
           import zipfile
           from pathlib import Path
 
-          for source in Path('assets').rglob('*.b64'):
+          assets = Path('assets')
+          covers = Path('covers')
+          covers.mkdir(parents=True, exist_ok=True)
+
+          # ZIPs enviados diretamente ao repositório.
+          for source in assets.rglob('*.zip'):
+              with zipfile.ZipFile(source) as archive:
+                  archive.extractall(covers)
+                  for name in archive.namelist():
+                      print(f'publicado: covers/{name}')
+
+          # Compatibilidade com pacotes Base64 já existentes.
+          for source in assets.rglob('*.b64'):
               encoded = ''.join(source.read_text(encoding='utf-8').split())
               payload = base64.b64decode(encoded)
 
@@ -33,12 +46,12 @@ jobs:
                       temporary.write(payload)
                       temporary.flush()
                       with zipfile.ZipFile(temporary.name) as archive:
-                          archive.extractall('covers')
+                          archive.extractall(covers)
                           for name in archive.namelist():
                               print(f'publicado: covers/{name}')
               else:
-                  relative = source.relative_to('assets')
-                  output = Path('covers') / relative.with_suffix('')
+                  relative = source.relative_to(assets)
+                  output = covers / relative.with_suffix('')
                   output.parent.mkdir(parents=True, exist_ok=True)
                   output.write_bytes(payload)
                   print(f'publicado: {output}')
