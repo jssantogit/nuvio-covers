@@ -1,0 +1,46 @@
+name: Publicar capas
+
+on:
+  push:
+    paths:
+      - 'assets/**/*.json'
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Decodificar capas
+        shell: bash
+        run: |
+          python - <<'PY'
+          import base64
+          import json
+          from pathlib import Path
+
+          for manifest in Path('assets').rglob('*.json'):
+              data = json.loads(manifest.read_text(encoding='utf-8'))
+              for relative_path, encoded in data['files'].items():
+                  output = Path(relative_path)
+                  output.parent.mkdir(parents=True, exist_ok=True)
+                  output.write_bytes(base64.b64decode(encoded))
+                  print(f'publicado: {output}')
+          PY
+
+      - name: Commit das imagens
+        shell: bash
+        run: |
+          git config user.name 'nuvio-covers-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add covers/
+          if git diff --cached --quiet; then
+            echo 'Nenhuma alteração para publicar.'
+          else
+            git commit -m 'Publica capas geradas'
+            git push
+          fi
