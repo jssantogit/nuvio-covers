@@ -5,7 +5,6 @@ on:
   push:
     paths:
       - 'assets/**/*.zip'
-      - 'assets/**/*.b64'
 
 permissions:
   contents: write
@@ -17,45 +16,32 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Publicar lotes
+      - name: Publicar lotes ZIP
         shell: bash
         run: |
           python - <<'PY'
-          import base64
-          import tempfile
           import zipfile
           from pathlib import Path
 
           assets = Path('assets')
           covers = Path('covers')
           covers.mkdir(parents=True, exist_ok=True)
+          found = False
 
-          # ZIPs enviados diretamente ao repositório.
           for source in assets.rglob('*.zip'):
+              found = True
+              print(f'processando: {source}')
               with zipfile.ZipFile(source) as archive:
+                  for member in archive.infolist():
+                      destination = (covers / member.filename).resolve()
+                      if covers.resolve() not in destination.parents and destination != covers.resolve():
+                          raise RuntimeError(f'Caminho inseguro no ZIP: {member.filename}')
                   archive.extractall(covers)
                   for name in archive.namelist():
                       print(f'publicado: covers/{name}')
 
-          # Compatibilidade com pacotes Base64 já existentes.
-          for source in assets.rglob('*.b64'):
-              encoded = ''.join(source.read_text(encoding='utf-8').split())
-              payload = base64.b64decode(encoded)
-
-              if source.name.endswith('.zip.b64'):
-                  with tempfile.NamedTemporaryFile(suffix='.zip') as temporary:
-                      temporary.write(payload)
-                      temporary.flush()
-                      with zipfile.ZipFile(temporary.name) as archive:
-                          archive.extractall(covers)
-                          for name in archive.namelist():
-                              print(f'publicado: covers/{name}')
-              else:
-                  relative = source.relative_to(assets)
-                  output = covers / relative.with_suffix('')
-                  output.parent.mkdir(parents=True, exist_ok=True)
-                  output.write_bytes(payload)
-                  print(f'publicado: {output}')
+          if not found:
+              raise RuntimeError('Nenhum arquivo ZIP encontrado em assets/.')
           PY
 
       - name: Commit das imagens
