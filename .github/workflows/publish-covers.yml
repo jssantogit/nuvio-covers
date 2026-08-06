@@ -20,15 +20,28 @@ jobs:
         run: |
           python - <<'PY'
           import base64
+          import tempfile
+          import zipfile
           from pathlib import Path
 
           for source in Path('assets').rglob('*.b64'):
-              relative = source.relative_to('assets')
-              output = Path('covers') / relative.with_suffix('')
-              output.parent.mkdir(parents=True, exist_ok=True)
               encoded = ''.join(source.read_text(encoding='utf-8').split())
-              output.write_bytes(base64.b64decode(encoded))
-              print(f'publicado: {output}')
+              payload = base64.b64decode(encoded)
+
+              if source.name.endswith('.zip.b64'):
+                  with tempfile.NamedTemporaryFile(suffix='.zip') as temporary:
+                      temporary.write(payload)
+                      temporary.flush()
+                      with zipfile.ZipFile(temporary.name) as archive:
+                          archive.extractall('covers')
+                          for name in archive.namelist():
+                              print(f'publicado: covers/{name}')
+              else:
+                  relative = source.relative_to('assets')
+                  output = Path('covers') / relative.with_suffix('')
+                  output.parent.mkdir(parents=True, exist_ok=True)
+                  output.write_bytes(payload)
+                  print(f'publicado: {output}')
           PY
 
       - name: Commit das imagens
