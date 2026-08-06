@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - 'assets/**/*.zip'
+      - 'assets/**/*.zip.b64'
       - '.github/workflows/publish-covers.yml'
 
 permissions:
@@ -17,10 +18,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Publicar lotes ZIP
+      - name: Publicar lotes
         shell: bash
         run: |
           python - <<'PY'
+          import base64
+          import io
           import zipfile
           from pathlib import Path
 
@@ -29,20 +32,30 @@ jobs:
           covers.mkdir(parents=True, exist_ok=True)
           found = False
 
-          for source in assets.rglob('*.zip'):
+          def extract_archive(archive, source_name):
+              global found
               found = True
-              print(f'processando: {source}')
+              print(f'processando: {source_name}')
+              for member in archive.infolist():
+                  destination = (covers / member.filename).resolve()
+                  if covers.resolve() not in destination.parents and destination != covers.resolve():
+                      raise RuntimeError(f'Caminho inseguro no ZIP: {member.filename}')
+              archive.extractall(covers)
+              for name in archive.namelist():
+                  print(f'publicado: covers/{name}')
+
+          for source in assets.rglob('*.zip'):
               with zipfile.ZipFile(source) as archive:
-                  for member in archive.infolist():
-                      destination = (covers / member.filename).resolve()
-                      if covers.resolve() not in destination.parents and destination != covers.resolve():
-                          raise RuntimeError(f'Caminho inseguro no ZIP: {member.filename}')
-                  archive.extractall(covers)
-                  for name in archive.namelist():
-                      print(f'publicado: covers/{name}')
+                  extract_archive(archive, source)
+
+          for source in assets.rglob('*.zip.b64'):
+              encoded = ''.join(source.read_text(encoding='utf-8').split())
+              payload = base64.b64decode(encoded, validate=True)
+              with zipfile.ZipFile(io.BytesIO(payload)) as archive:
+                  extract_archive(archive, source)
 
           if not found:
-              raise RuntimeError('Nenhum arquivo ZIP encontrado em assets/.')
+              raise RuntimeError('Nenhum pacote ZIP encontrado em assets/.')
           PY
 
       - name: Commit das imagens
