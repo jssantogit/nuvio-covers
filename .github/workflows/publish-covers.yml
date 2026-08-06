@@ -1,6 +1,7 @@
 name: Publicar capas
 
 on:
+  workflow_dispatch:
   push:
     paths:
       - 'assets/**/*.zip'
