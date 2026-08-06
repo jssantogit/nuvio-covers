@@ -3,7 +3,7 @@ name: Publicar capas
 on:
   push:
     paths:
-      - 'assets/**/*.json'
+      - 'assets/**/*.b64'
 
 permissions:
   contents: write
@@ -20,16 +20,15 @@ jobs:
         run: |
           python - <<'PY'
           import base64
-          import json
           from pathlib import Path
 
-          for manifest in Path('assets').rglob('*.json'):
-              data = json.loads(manifest.read_text(encoding='utf-8'))
-              for relative_path, encoded in data['files'].items():
-                  output = Path(relative_path)
-                  output.parent.mkdir(parents=True, exist_ok=True)
-                  output.write_bytes(base64.b64decode(encoded))
-                  print(f'publicado: {output}')
+          for source in Path('assets').rglob('*.b64'):
+              relative = source.relative_to('assets')
+              output = Path('covers') / relative.with_suffix('')
+              output.parent.mkdir(parents=True, exist_ok=True)
+              encoded = ''.join(source.read_text(encoding='utf-8').split())
+              output.write_bytes(base64.b64decode(encoded))
+              print(f'publicado: {output}')
           PY
 
       - name: Commit das imagens
