@@ -1,0 +1,107 @@
+{
+  "collection_id": "hub-discover",
+  "collection_title": "Descobrir",
+  "version": "v1",
+  "files": {
+    "discover-trending": {
+      "title": "Em alta agora",
+      "filename": "discover-trending-v1.webp",
+      "path": "covers/descobrir/discover-trending-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-trending-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 22236,
+      "sha256": "4ddb2b548207c432a8df1f64599406a61fa9e885cc1b275407130f4648fd5f8c"
+    },
+    "discover-weekly-top": {
+      "title": "Top da semana",
+      "filename": "discover-weekly-top-v1.webp",
+      "path": "covers/descobrir/discover-weekly-top-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-weekly-top-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 21258,
+      "sha256": "01e0da7a7a7d7976a184621cca401df568532d9495a2bfc687e773c5e9c57295"
+    },
+    "discover-new-releases": {
+      "title": "Lançamentos recentes",
+      "filename": "discover-new-releases-v1.webp",
+      "path": "covers/descobrir/discover-new-releases-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-new-releases-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 26226,
+      "sha256": "abf93392c53b12e5a9eb0350240f53bdf3305866f794cc6976ba05d294893238"
+    },
+    "discover-streaming-new": {
+      "title": "Novidades no streaming",
+      "filename": "discover-streaming-new-v1.webp",
+      "path": "covers/descobrir/discover-streaming-new-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-streaming-new-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 24128,
+      "sha256": "a0d4e7cb63d8e21f3342907856c799bff26b6e92a90b41d521a397c4715c5e5e"
+    },
+    "discover-top-rated": {
+      "title": "Melhores avaliados",
+      "filename": "discover-top-rated-v1.webp",
+      "path": "covers/descobrir/discover-top-rated-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-top-rated-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 24180,
+      "sha256": "3366cabb2bf2682fbe2e011292d7d3e290294824d9b0baa4fed8a35dfde67ea5"
+    },
+    "discover-anticipated": {
+      "title": "Mais aguardados",
+      "filename": "discover-anticipated-v1.webp",
+      "path": "covers/descobrir/discover-anticipated-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-anticipated-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 24578,
+      "sha256": "f87d7a08f6c00626e1e739d7aa457d8f3e61c2f61e4c57a2f980c893d43ae13e"
+    },
+    "discover-hidden-gems": {
+      "title": "Joias escondidas",
+      "filename": "discover-hidden-gems-v1.webp",
+      "path": "covers/descobrir/discover-hidden-gems-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-hidden-gems-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 24084,
+      "sha256": "6e43780f84bdfe8311051f177ec9fb91916b402254e3ff8a7d1278ab18a09cef"
+    },
+    "discover-cult-favorites": {
+      "title": "Cult e favoritos",
+      "filename": "discover-cult-favorites-v1.webp",
+      "path": "covers/descobrir/discover-cult-favorites-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-cult-favorites-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 17832,
+      "sha256": "1e39d468a3d9e1b7d9b6fc36521de21ec9dc1420765a8b364160e157f2a9d77c"
+    },
+    "discover-binge": {
+      "title": "Para maratonar",
+      "filename": "discover-binge-v1.webp",
+      "path": "covers/descobrir/discover-binge-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-binge-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 20202,
+      "sha256": "5cd0d98d3cf60ac13fe990d608cb030601ab416caa54280ce96212d079fac01e"
+    },
+    "discover-community": {
+      "title": "Curadoria da comunidade",
+      "filename": "discover-community-v1.webp",
+      "path": "covers/descobrir/discover-community-v1.webp",
+      "url": "https://raw.githubusercontent.com/jssantogit/nuvio-covers/main/covers/descobrir/discover-community-v1.webp",
+      "width": 1536,
+      "height": 864,
+      "bytes": 23782,
+      "sha256": "2e01ef641cc986711d30144687e02c02324e67f082f23166da4fae7b182fa6aa"
+    }
+  }
+}
