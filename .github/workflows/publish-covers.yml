@@ -5,7 +5,7 @@ on:
   push:
     paths:
       - 'assets/**/*.zip'
-      - 'assets/**/*.zip.b64'
+      - 'assets/**/*.zip.part*'
       - '.github/workflows/publish-covers.yml'
 
 permissions:
@@ -22,40 +22,51 @@ jobs:
         shell: bash
         run: |
           python - <<'PY'
-          import base64
-          import io
+          import tempfile
           import zipfile
           from pathlib import Path
 
           assets = Path('assets')
           covers = Path('covers')
           covers.mkdir(parents=True, exist_ok=True)
+          processed = []
           found = False
 
-          def extract_archive(archive, source_name):
+          def safe_extract(archive, source_name):
               global found
               found = True
               print(f'processando: {source_name}')
+              root = covers.resolve()
               for member in archive.infolist():
                   destination = (covers / member.filename).resolve()
-                  if covers.resolve() not in destination.parents and destination != covers.resolve():
+                  if root not in destination.parents and destination != root:
                       raise RuntimeError(f'Caminho inseguro no ZIP: {member.filename}')
               archive.extractall(covers)
               for name in archive.namelist():
                   print(f'publicado: covers/{name}')
 
-          for source in assets.rglob('*.zip'):
+          for source in sorted(assets.rglob('*.zip')):
               with zipfile.ZipFile(source) as archive:
-                  extract_archive(archive, source)
+                  safe_extract(archive, source)
+              processed.append(source)
 
-          for source in assets.rglob('*.zip.b64'):
-              encoded = ''.join(source.read_text(encoding='utf-8').split())
-              payload = base64.b64decode(encoded, validate=True)
-              with zipfile.ZipFile(io.BytesIO(payload)) as archive:
-                  extract_archive(archive, source)
+          first_parts = sorted(assets.rglob('*.zip.part01'))
+          for first in first_parts:
+              prefix = first.name[:-2]
+              parts = sorted(first.parent.glob(prefix + '*'))
+              with tempfile.NamedTemporaryFile(suffix='.zip') as temporary:
+                  for part in parts:
+                      temporary.write(part.read_bytes())
+                  temporary.flush()
+                  with zipfile.ZipFile(temporary.name) as archive:
+                      safe_extract(archive, first.parent / prefix)
+              processed.extend(parts)
 
           if not found:
               raise RuntimeError('Nenhum pacote ZIP encontrado em assets/.')
+
+          for source in processed:
+              source.unlink(missing_ok=True)
           PY
 
       - name: Commit das imagens
@@ -64,6 +75,7 @@ jobs:
           git config user.name 'nuvio-covers-bot'
           git config user.email 'actions@users.noreply.github.com'
           git add covers/
+          git add -u assets/
           if git diff --cached --quiet; then
             echo 'Nenhuma alteração para publicar.'
           else
